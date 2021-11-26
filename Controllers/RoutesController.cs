@@ -13,6 +13,7 @@ using AutoMapper;
 using Amazon.DynamoDBv2.DocumentModel;
 using System;
 using System.Linq;
+using ProjectWebAPI.Repository;
 
 namespace ProjectWebAPI.Controllers
 {
@@ -25,36 +26,43 @@ namespace ProjectWebAPI.Controllers
 
         public static AmazonDynamoDBClient client = null;
         IMapper mapper = null;
-        public RoutesController()
+        
+        private readonly IBusRepository _busRepository;
+        public RoutesController(IBusRepository busRepository)
         {
 
 
-            var builder = new ConfigurationBuilder()
-                            .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("AppSettings.Json", optional: true, reloadOnChange: true);
+            //var builder = new ConfigurationBuilder()
+            //                .SetBasePath(Directory.GetCurrentDirectory())
+            //                .AddJsonFile("AppSettings.Json", optional: true, reloadOnChange: true);
 
-            var accessKeyID = builder.Build().GetSection("AWSCredentials").GetSection("AccesskeyID").Value;
-            var secretKey = builder.Build().GetSection("AWSCredentials").GetSection("Secretaccesskey").Value;
+            //var accessKeyID = builder.Build().GetSection("AWSCredentials").GetSection("AccesskeyID").Value;
+            //var secretKey = builder.Build().GetSection("AWSCredentials").GetSection("Secretaccesskey").Value;
 
-            var credentials = new BasicAWSCredentials(accessKeyID, secretKey);
-            client = new AmazonDynamoDBClient(credentials, Amazon.RegionEndpoint.USEast1);
-            context = new DynamoDBContext(client);
+            //var credentials = new BasicAWSCredentials(accessKeyID, secretKey);
+            //client = new AmazonDynamoDBClient(credentials, Amazon.RegionEndpoint.USEast1);
+            //context = new DynamoDBContext(client);
 
-            var config = new MapperConfiguration(cfg =>
-                   {
-                       cfg.CreateMap<Bus, BusViewModel>();
-                       cfg.CreateMap<BusStop, BusStopViewModel>();
-                   }
-               );
-            mapper = config.CreateMapper();
+            //var config = new MapperConfiguration(cfg =>
+            //       {
+            //           cfg.CreateMap<Bus, BusDTO>();
+            //           cfg.CreateMap<BusDTO, Bus>();
+            //           cfg.CreateMap<BusStop, BusStopDTO>();
+            //           cfg.CreateMap<BusStopDTO, BusStop>();
+            //       }
+            //   );
+            //mapper = config.CreateMapper();
+
+            _busRepository = busRepository;
         }
         [HttpGet]
         public async Task<IActionResult> GetRoutes()
         {
-            var conditions = new List<ScanCondition>();
+            //var conditions = new List<ScanCondition>();
 
-            var bus = await context.ScanAsync<Bus>(conditions).GetRemainingAsync();
-            var busDTO = mapper.Map<List<BusViewModel>>(bus);
+            //var bus = await context.ScanAsync<Bus>(conditions).GetRemainingAsync();
+            //var busDTO = mapper.Map<List<BusDTO>>(bus);
+           var busDTO= await _busRepository.GetRoutes();
             return Ok(busDTO);
 
         }
@@ -63,12 +71,8 @@ namespace ProjectWebAPI.Controllers
         [Route("GetBusStopByRouteID/{RouteId}")]
         public async Task<IActionResult> GetBusStopByRouteID(string RouteId)
         {
-            var conditions = new List<ScanCondition>();
 
-            var bus = await context.ScanAsync<BusStop>(new[] {
-                    new ScanCondition("BusID", ScanOperator.Equal, RouteId)
-                }).GetRemainingAsync();
-            var busDTO = mapper.Map<List<BusStopViewModel>>(bus);
+            var busDTO = await _busRepository.GetBusStopByRouteID(RouteId);
 
             return Ok(busDTO);
 
@@ -78,38 +82,35 @@ namespace ProjectWebAPI.Controllers
         [Route("GetScheduleTimeByRouteId/{RouteId}")]
         public async Task<IActionResult> GetScheduleTimeByRouteId(string RouteId)
         {
-            var conditions = new List<ScanCondition>();
-
-            var bus = await context.ScanAsync<Bus>(new[] {
-                    new ScanCondition("BusID", ScanOperator.Equal, RouteId)
-                }).GetRemainingAsync();
-            var busDTO = mapper.Map<BusViewModel>(bus.FirstOrDefault());
-
-            DateTime ts = DateTime.UtcNow;
-
-            var startTime = new DateTime(ts.Year, ts.Month, ts.Day, Convert.ToInt16(busDTO.StartTime.Split(':')[0]), Convert.ToInt16(busDTO.StartTime.Split(':')[1]), 0);
-            var stopTime = new DateTime(ts.Year, ts.Month, ts.Day, Convert.ToInt16(busDTO.EndTime.Split(':')[0]), Convert.ToInt16(busDTO.EndTime.Split(':')[1]), 0);
-
-            BusscheduleViewModel obj = new BusscheduleViewModel();
-            obj.BusID = busDTO.BusID;
-            obj.BusName = busDTO.BusName;
-            obj.BusNumber = busDTO.BusName;
-            obj.StartPlace = busDTO.StartPlace;
-            obj.EndPlace = busDTO.EndPlace ;
-            List<string> list = new List<string>();
-
-            do
-            {
-                list.Add(startTime.ToString("HH:mm"));
-                TimeSpan time = new TimeSpan(0, Convert.ToInt16(busDTO.Frequency.Split(':')[0]), Convert.ToInt16(busDTO.Frequency.Split(':')[1]), 0);
-                startTime = startTime.Add(time);
-               
-
-            } while (startTime < stopTime);
-
-            obj.ScheduledTime = list;
+            var obj = await _busRepository.GetScheduleTimeByRouteId(RouteId);
 
             return Ok(obj);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRoute([FromBody] BusDTO busDTO )
+        {
+
+            var obj = await _busRepository.AddRoute(busDTO);
+            return Ok(obj);
+
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateRoute([FromBody] BusDTO busDTO)
+        {
+
+            var obj = await _busRepository.UpdateRoute(busDTO);
+            return Ok(obj);
+
+        }
+
+        [HttpDelete]      
+        public async Task<IActionResult> DeleteRoute([FromBody] BusDTO busDTO)
+        {
+            await _busRepository.DeleteRoute(busDTO);
+            return Ok("Successfully deleted");
 
         }
     }
