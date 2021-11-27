@@ -98,6 +98,15 @@ namespace ProjectWebAPI.Controllers
 
         }
 
+        [HttpGet]
+        [Route("GetRouteById/{RouteId}")]
+        public async Task<IActionResult> GetRouteById(string RouteId)
+        {
+            var obj = await _busRepository.GetRouteById(RouteId);
+
+            return Ok(obj);
+        }
+
         [HttpPost]
         [Route("AddBusStop")]
         public async Task<IActionResult> AddBusStop([FromBody] BusStopDTO busStopDTO)
@@ -118,13 +127,13 @@ namespace ProjectWebAPI.Controllers
 
         }
 
-        [HttpDelete]
-        [Route("DeleteRoute")]
-        public async Task<IActionResult> DeleteRoute([FromBody] BusDTO busDTO)
+        [HttpDelete("{id}")]      
+        public async Task<IActionResult> DeleteRoute(string id)
         {
-            await _busRepository.DeleteRoute(busDTO);
-            return Ok("Successfully deleted");
+            var obj = await _busRepository.GetRouteById(id);
 
+            await _busRepository.DeleteRoute(obj);
+            return Ok("Successfully deleted");
         }
 
         [HttpPut]

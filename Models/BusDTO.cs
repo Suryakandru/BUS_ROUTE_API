@@ -26,11 +26,11 @@ namespace ProjectWebAPI.Models
     {
         public string BusID { get; set; }
 
-        public string BusName { get; set; }        
+        public string BusName { get; set; }
 
         public string BusNumber { get; set; }
 
-        public List<string> ScheduledTime { get; set; }        
+        public List<string> ScheduledTime { get; set; }
 
         public string StartPlace { get; set; }
 

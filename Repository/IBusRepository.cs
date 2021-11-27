@@ -11,6 +11,7 @@ namespace ProjectWebAPI.Repository
         Task<BusscheduleViewModel> GetScheduleTimeByRouteId(string RouteId);
         Task<Bus> AddRoute(BusDTO busDTO);
         Task<Bus> UpdateRoute(BusDTO busDTO);
+        Task<BusDTO> GetRouteById(string RouteId);
         Task DeleteRoute(BusDTO busDTO);
         Task<BusStop> AddBusStop(BusStopDTO busDTO);
         Task<BusStop> UpdateBusStop(BusStopDTO busDTO);

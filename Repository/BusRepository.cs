@@ -63,6 +63,17 @@ namespace ProjectWebAPI.Repository
             return busDTO;
         }
 
+        public async Task<BusDTO> GetRouteById(string RouteId)
+        {
+            var bus = await _context.ScanAsync<Bus>(new[] {
+                    new ScanCondition("BusID", ScanOperator.Equal, RouteId)
+                }).GetRemainingAsync();
+
+            var busDTO = _mapper.Map<BusDTO>(bus.FirstOrDefault());
+
+            return busDTO;
+        }
+
         public async Task<BusscheduleViewModel> GetScheduleTimeByRouteId(string RouteId)
         {
             var bus = await _context.ScanAsync<Bus>(new[] {
