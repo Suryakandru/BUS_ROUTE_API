@@ -107,8 +107,6 @@ namespace ProjectWebAPI.Controllers
             return Ok(obj);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateRoute([FromForm] BusDTO busDTO)
         [HttpPost]
         [Route("AddBusStop")]
         public async Task<IActionResult> AddBusStop([FromBody] BusStopDTO busStopDTO)
