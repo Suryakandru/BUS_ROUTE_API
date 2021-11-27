@@ -22,7 +22,7 @@ namespace ProjectWebAPI.Repository
         public async Task<Bus> AddRoute(BusDTO busDTO)
         {
             var busobj = _mapper.Map<Bus>(busDTO);
-            busobj.BusID = _random.Next(100000).ToString();
+            busobj.BusID = _random.Next(10000000).ToString();
 
             await _context.SaveAsync(busobj);
             return busobj;
@@ -33,7 +33,19 @@ namespace ProjectWebAPI.Repository
             var busobj = _mapper.Map<Bus>(busDTO);
             await _context.DeleteAsync(busobj);
         }
-
+        public async Task DeleteBusStop(BusStopDTO busDTO)
+        {
+            var busobj = _mapper.Map<BusStop>(busDTO);
+            await _context.DeleteAsync(busobj);
+        }
+        public async Task<BusStop> AddBusStop(BusStopDTO busDTO)
+        {
+            var busobj = _mapper.Map<BusStop>(busDTO);
+            busobj.BusStopID = _random.Next(10000000).ToString();
+            
+            await _context.SaveAsync(busobj);
+            return busobj;
+        }
         public async Task<List<BusStopDTO>> GetBusStopByRouteID(string RouteId)
         {
             var bus = await _context.ScanAsync<BusStop>(new[] {
@@ -99,6 +111,14 @@ namespace ProjectWebAPI.Repository
         public async Task<Bus> UpdateRoute(BusDTO busDTO)
         {
             var busobj = _mapper.Map<Bus>(busDTO);
+
+            await _context.SaveAsync(busobj);
+            return busobj;
+        }
+
+        public async Task<BusStop> UpdateBusStop(BusStopDTO busDTO)
+        {
+            var busobj = _mapper.Map<BusStop>(busDTO);
 
             await _context.SaveAsync(busobj);
             return busobj;

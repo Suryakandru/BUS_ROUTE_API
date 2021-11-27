@@ -25,7 +25,7 @@ namespace ProjectWebAPI.Controllers
         public BasicAWSCredentials credentials { get; }
 
         public static AmazonDynamoDBClient client = null;
-        IMapper mapper = null;
+       
         
         private readonly IBusRepository _busRepository;
         public RoutesController(IBusRepository busRepository)
@@ -89,6 +89,7 @@ namespace ProjectWebAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddRoute")]
         public async Task<IActionResult> AddRoute([FromBody] BusDTO busDTO )
         {
 
@@ -108,6 +109,19 @@ namespace ProjectWebAPI.Controllers
 
         [HttpPut]
         public async Task<IActionResult> UpdateRoute([FromForm] BusDTO busDTO)
+        [HttpPost]
+        [Route("AddBusStop")]
+        public async Task<IActionResult> AddBusStop([FromBody] BusStopDTO busStopDTO)
+        {
+
+            var obj = await _busRepository.AddBusStop(busStopDTO);
+            return Ok(obj);
+
+        }
+
+        [HttpPut]
+        [Route("UpdateRoute")]
+        public async Task<IActionResult> UpdateRoute([FromBody] BusDTO busDTO)
         {
 
             var obj = await _busRepository.UpdateRoute(busDTO);
@@ -122,6 +136,25 @@ namespace ProjectWebAPI.Controllers
 
             await _busRepository.DeleteRoute(obj);
             return Ok("Successfully deleted");
+        }
+
+        [HttpPut]
+        [Route("UpdateBusStop")]
+        public async Task<IActionResult> UpdateBusStop([FromBody] BusDTO busDTO)
+        {
+
+            var obj = await _busRepository.UpdateRoute(busDTO);
+            return Ok(obj);
+
+        }
+
+        [HttpDelete]
+        [Route("DeleteBusStop")]
+        public async Task<IActionResult> DeleteBusStop([FromBody] BusDTO busDTO)
+        {
+            await _busRepository.DeleteRoute(busDTO);
+            return Ok("Successfully deleted");
+
         }
     }
 }

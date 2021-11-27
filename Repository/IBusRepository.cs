@@ -13,6 +13,10 @@ namespace ProjectWebAPI.Repository
         Task<Bus> UpdateRoute(BusDTO busDTO);
         Task<BusDTO> GetRouteById(string RouteId);
         Task DeleteRoute(BusDTO busDTO);
-       
+        Task<BusStop> AddBusStop(BusStopDTO busDTO);
+        Task<BusStop> UpdateBusStop(BusStopDTO busDTO);
+        Task DeleteBusStop(BusStopDTO busDTO);
+
+
     }
 }
