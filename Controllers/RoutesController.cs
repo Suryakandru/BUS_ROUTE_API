@@ -98,7 +98,7 @@ namespace ProjectWebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateRoute([FromBody] BusDTO busDTO)
+        public async Task<IActionResult> UpdateRoute([FromForm] BusDTO busDTO)
         {
 
             var obj = await _busRepository.UpdateRoute(busDTO);
@@ -106,12 +106,13 @@ namespace ProjectWebAPI.Controllers
 
         }
 
-        [HttpDelete]      
-        public async Task<IActionResult> DeleteRoute([FromBody] BusDTO busDTO)
+        [HttpDelete("{id}")]      
+        public async Task<IActionResult> DeleteRoute(string id)
         {
-            await _busRepository.DeleteRoute(busDTO);
-            return Ok("Successfully deleted");
+            var obj = await _busRepository.GetRouteById(id);
 
+            await _busRepository.DeleteRoute(obj);
+            return Ok("Successfully deleted");
         }
     }
 }
