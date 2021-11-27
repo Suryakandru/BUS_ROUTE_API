@@ -117,9 +117,18 @@ namespace ProjectWebAPI.Controllers
 
         }
 
+        [HttpGet]
+        [Route("GetBusStopById/{BusStopId}")]
+        public async Task<IActionResult> GetBusStopById(string BusStopId)
+        {
+            var obj = await _busRepository.GetBusStopById(BusStopId);
+
+            return Ok(obj);
+        }
+
         [HttpPut]
         [Route("UpdateRoute")]
-        public async Task<IActionResult> UpdateRoute([FromBody] BusDTO busDTO)
+        public async Task<IActionResult> UpdateRoute([FromForm] BusDTO busDTO)
         {
 
             var obj = await _busRepository.UpdateRoute(busDTO);
@@ -138,19 +147,22 @@ namespace ProjectWebAPI.Controllers
 
         [HttpPut]
         [Route("UpdateBusStop")]
-        public async Task<IActionResult> UpdateBusStop([FromBody] BusDTO busDTO)
+        public async Task<IActionResult> UpdateBusStop([FromForm] BusStopDTO busStopDTO)
         {
 
-            var obj = await _busRepository.UpdateRoute(busDTO);
+            var obj = await _busRepository.UpdateBusStop(busStopDTO);
             return Ok(obj);
 
         }
 
         [HttpDelete]
-        [Route("DeleteBusStop")]
-        public async Task<IActionResult> DeleteBusStop([FromBody] BusDTO busDTO)
+        [Route("DeleteBusStop/{id}")]
+        public async Task<IActionResult> DeleteBusStop(string id)
         {
-            await _busRepository.DeleteRoute(busDTO);
+            var obj = await _busRepository.GetBusStopById(id);
+
+            await _busRepository.DeleteBusStop(obj);
+
             return Ok("Successfully deleted");
 
         }
