@@ -119,7 +119,7 @@ namespace ProjectWebAPI.Controllers
 
         [HttpPut]
         [Route("UpdateRoute")]
-        public async Task<IActionResult> UpdateRoute([FromBody] BusDTO busDTO)
+        public async Task<IActionResult> UpdateRoute([FromForm] BusDTO busDTO)
         {
 
             var obj = await _busRepository.UpdateRoute(busDTO);
