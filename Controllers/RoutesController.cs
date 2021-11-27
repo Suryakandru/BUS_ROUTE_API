@@ -97,6 +97,15 @@ namespace ProjectWebAPI.Controllers
 
         }
 
+        [HttpGet]
+        [Route("GetRouteById/{RouteId}")]
+        public async Task<IActionResult> GetRouteById(string RouteId)
+        {
+            var obj = await _busRepository.GetRouteById(RouteId);
+
+            return Ok(obj);
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateRoute([FromForm] BusDTO busDTO)
         {
