@@ -1,4 +1,4 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.Runtime;
 using Microsoft.AspNetCore.Http;
@@ -83,6 +83,26 @@ namespace ProjectWebAPI.Controllers
         public async Task<IActionResult> GetScheduleTimeByRouteId(string RouteId)
         {
             var obj = await _busRepository.GetScheduleTimeByRouteId(RouteId);
+
+            return Ok(obj);
+
+        }
+		
+		 [HttpGet]
+        [Route("GetRouteByBusNumber/{BusNumber}")]
+        public async Task<IActionResult> GetRouteByBusNumber(string BusNumber)
+        {
+            var obj = await _busRepository.GetRouteByBusNumber(BusNumber);
+
+            return Ok(obj);
+
+        }
+
+        [HttpGet]
+        [Route("GetRouteByPlace/{FromPlace}/{ToPlace}")]
+        public async Task<IActionResult> GetRouteByPlace(string FromPlace, string ToPlace)
+        {
+            var obj = await _busRepository.GetRouteByPlace(FromPlace, ToPlace);
 
             return Ok(obj);
 

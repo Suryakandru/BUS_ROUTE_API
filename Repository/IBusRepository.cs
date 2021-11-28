@@ -1,4 +1,4 @@
-﻿using ProjectWebAPI.Models;
+using ProjectWebAPI.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,6 +17,9 @@ namespace ProjectWebAPI.Repository
         Task<BusStopDTO> GetBusStopById(string BusStopId);
         Task<BusStop> UpdateBusStop(BusStopDTO busDTO);
         Task DeleteBusStop(BusStopDTO busStopDTO);
+		//alternative to getRouteById
+		Task<List<BusDTO>> GetRouteByPlace(string FromPlace, string ToPlace);
+        Task<List<BusDTO>> GetRouteByBusNumber(string BusNumber);
 
 
     }

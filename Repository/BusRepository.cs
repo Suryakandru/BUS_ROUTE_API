@@ -1,4 +1,4 @@
-﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using AutoMapper;
 using ProjectWebAPI.Models;
@@ -58,12 +58,32 @@ namespace ProjectWebAPI.Repository
             return busStopDTO;
         }
 
-        public async Task<List<BusStopDTO>> GetBusStopByRouteID(string RouteId)
+           public async Task<List<BusStopDTO>> GetBusStopByRouteID(string RouteId)
         {
             var bus = await _context.ScanAsync<BusStop>(new[] {
                     new ScanCondition("BusID", ScanOperator.Equal, RouteId)
                 }).GetRemainingAsync();
             var busDTO = _mapper.Map<List<BusStopDTO>>(bus);
+            return busDTO?.OrderBy(c => c.Order)?.ToList();
+        }
+		//alternative method of getRouteById
+		public async Task<List<BusDTO>> GetRouteByPlace(string FromPlace, string ToPlace)
+        {
+            var bus = await _context.ScanAsync<Bus>(new[] {
+                    new ScanCondition("StartPlace", ScanOperator.Contains, FromPlace),
+                    new ScanCondition("EndPlace", ScanOperator.Contains, ToPlace)
+                }).GetRemainingAsync();
+            var busDTO = _mapper.Map<List<BusDTO>>(bus);
+            return busDTO;
+        }
+         
+		 //alternative method of getRouteById user can get using bus number
+        public async Task<List<BusDTO>> GetRouteByBusNumber(string BusNumber)
+        {
+            var bus = await _context.ScanAsync<Bus>(new[] {
+                    new ScanCondition("BusNumber", ScanOperator.Contains, BusNumber)
+                }).GetRemainingAsync();
+            var busDTO = _mapper.Map<List<BusDTO>>(bus);
             return busDTO;
         }
 
@@ -74,7 +94,7 @@ namespace ProjectWebAPI.Repository
             var busDTO = _mapper.Map<List<BusDTO>>(bus);
             return busDTO;
         }
-
+         
         public async Task<BusDTO> GetRouteById(string RouteId)
         {
             var bus = await _context.ScanAsync<Bus>(new[] {
